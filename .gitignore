@@ -1,0 +1,6 @@
+/.vscode
+/.vs
+/ProjetoCoreWebAPI/bin
+/ProjetoCoreWebAPI/obj
+/ProjetoCoreWebAPI/Database/ProjetoCore.db
+/ProjetoCoreWebAPI/Migrations

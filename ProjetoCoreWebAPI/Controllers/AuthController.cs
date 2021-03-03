@@ -37,5 +37,24 @@ namespace ProjetoCoreWebAPI.Controllers
                 return this.StatusCode(401, $"{ex.Message}");
             }
         }
+
+        [HttpGet("perfil")]
+        public async Task<ActionResult> Perfil()
+        {
+            try
+            {
+                var usuarioLogado = await _authRepository.UsuarioLogado();
+                if (usuarioLogado == null)
+                {
+                    return NotFound("Usuário não encontrado!");
+                }
+
+                return Ok(usuarioLogado);
+            } 
+            catch (System.Exception ex)
+            {
+                return this.StatusCode(400, $"{ex.Message}");
+            }
+        }
     }
 }

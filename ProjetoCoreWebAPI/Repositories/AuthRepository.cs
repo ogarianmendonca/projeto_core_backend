@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -20,16 +21,19 @@ namespace ProjetoCoreWebAPI.Repositories
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _accessor;
 
         public AuthRepository(IConfiguration config,
                               UserManager<User> userManager,
                               SignInManager<User> signInManager,
-                              IMapper mapper
+                              IMapper mapper,
+                              IHttpContextAccessor accessor
         ) {
             _config = config;
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
+            _accessor = accessor;
         }
 
         public async Task<TokenDTO> GenerateToken(UsuarioLoginDTO userLoginDTO)
@@ -83,5 +87,25 @@ namespace ProjetoCoreWebAPI.Repositories
 
             return tokenDTO;
         }
+
+        public async Task<UsuarioDTO> UsuarioLogado()
+        {
+            var userName = _accessor.HttpContext.User.Identity.Name;
+            var usuario = await _userManager.FindByNameAsync(userName);
+
+            List<RoleDTO> rolesDTO = new List<RoleDTO>();
+            var rolesNames = await _userManager.GetRolesAsync(usuario);
+            foreach (var roleName in rolesNames)
+            {
+                Role role = new Role();
+                role.Name = roleName;
+                rolesDTO.Add(_mapper.Map<RoleDTO>(role));
+            }
+
+            var usuarioLogado = _mapper.Map<UsuarioDTO>(usuario);
+            usuarioLogado.Roles = rolesDTO;
+
+            return _mapper.Map<UsuarioDTO>(usuarioLogado);
+        }   
     }
 }

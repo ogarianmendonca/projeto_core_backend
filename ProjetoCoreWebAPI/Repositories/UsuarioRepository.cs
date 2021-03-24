@@ -109,8 +109,10 @@ namespace ProjetoCoreWebAPI.Repositories
                 user.Email = usuarioDTO.Email;
                 user.UserName = usuarioDTO.UserName;
                 user.UpdatedAt = DateTime.Now;
-           
-                if (usuarioDTO.Roles.Count > 0)
+                user.Image = usuarioDTO.Image;
+
+                var alteraRoles = false;
+                if (usuarioDTO.Roles != null)
                 {
                     var roles = _userManager.GetRolesAsync(user);
                     foreach (string role in roles.Result)
@@ -124,6 +126,8 @@ namespace ProjetoCoreWebAPI.Repositories
                         nomeRole = new string[] { new string(role.Name) };
                         await _userManager.AddToRolesAsync(user, nomeRole);
                     }
+
+                    alteraRoles = true;
                 }
 
                 var result = await _userManager.UpdateAsync(user);
@@ -132,14 +136,18 @@ namespace ProjetoCoreWebAPI.Repositories
                     throw new Exception("Erro ao editar usuário!");
                 }
 
-                List<RoleDTO> rolesDTO = new List<RoleDTO>();
-                foreach (UserRole userRole in user.UserRoles)
-                {
-                    rolesDTO.Add(_mapper.Map<RoleDTO>(userRole.Role));
-                }
-
                 var usuarioEditado = _mapper.Map<UsuarioDTO>(user);
-                usuarioEditado.Roles = rolesDTO;
+
+                if (alteraRoles)
+                {
+                    List<RoleDTO> rolesDTO = new List<RoleDTO>();
+                    foreach (UserRole userRole in user.UserRoles)
+                    {
+                        rolesDTO.Add(_mapper.Map<RoleDTO>(userRole.Role));
+                    }
+
+                    usuarioEditado.Roles = rolesDTO;
+                }
 
                 return usuarioEditado;
             }

@@ -42,14 +42,14 @@ namespace ProjetoCoreWebAPI.Repositories
 
             if (user == null)
             {
-                throw new Exception("Login ou senha inválidos!");
+                throw new Exception("Nome de usuário ou senha inválidos!");
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, userLoginDTO.Password, false);
 
             if (!result.Succeeded)
             {
-                throw new Exception("Login ou senha inválidos!");
+                throw new Exception("Nome de usuário ou senha inválidos!");
             }
 
             var claims = new List<Claim>

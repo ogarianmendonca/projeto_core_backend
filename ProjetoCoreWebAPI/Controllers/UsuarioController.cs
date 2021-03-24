@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ProjetoCoreWebAPI.DTO;
 using ProjetoCoreWebAPI.Interfaces;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ProjetoCoreWebAPI.Controllers
 {
@@ -94,7 +94,7 @@ namespace ProjetoCoreWebAPI.Controllers
         }
 
         // ATUALIZAR PASSWORD api/<UsuarioController>/5
-        [HttpPatch("{id}")]
+        [HttpPut("atualizar-senha/{id}")]
         public async Task<ActionResult> AtualizarPassword(int id, PasswordDTO passwordDTO)
         {
             try
@@ -104,7 +104,46 @@ namespace ProjetoCoreWebAPI.Controllers
                     throw new Exception($"Erro ao atualizar a senha!");
                 }
 
-                return Ok("Senha atualizada com sucesso!");
+                return Ok(new { message = "Senha alterada com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(500, $"{ex.Message}");
+            }
+        }
+
+        [HttpPost("convert-file")]
+        public ActionResult ConvertToBase64()
+        {
+            try
+            {
+                var file = Request.Form.Files[0];
+                var folderName = Path.Combine("Resources", "Uploads/Perfil");
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+                if (file.Length > 0)
+                {
+                    var filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName;
+                    var fullPath = Path.Combine(pathToSave, filename.Replace("\"", " ").Trim());
+
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                    }
+
+                    Byte[] bytes = System.IO.File.ReadAllBytes(fullPath);
+                    String fileBase64 = Convert.ToBase64String(bytes);
+
+                    var arrayFileName = file.FileName.Split(".");
+                    var imagemBase64 = "data:image/" + arrayFileName[1] + ";base64," + fileBase64;
+
+                    System.IO.File.Delete(fullPath);
+
+                    return Ok(new { fileBase64 = imagemBase64 });
+                }
+
+                return this.StatusCode(500, $"Ocorreu um erro ao efetuar conversão de arquivo para base64!");
+
             }
             catch (Exception ex)
             {

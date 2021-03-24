@@ -24,6 +24,8 @@ namespace ProjetoCoreWebAPI.DTO
         [Compare("Password", ErrorMessage = "Senha e confirmação de senha são diferentes!")]
         public string ConfirmPassword { get; set; }
 
+        public string Image { get; set; }
+
         public List<RoleDTO> Roles { get; set; }
     }
 }

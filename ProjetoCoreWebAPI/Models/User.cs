@@ -12,6 +12,8 @@ namespace ProjetoCoreWebAPI.Models
         
         public List<UserRole> UserRoles { get; set; }
 
+        public string Image { get; set; }
+
         public bool Ativo { get; set; }
 
         public DateTime? CreatedAt { get; set; }

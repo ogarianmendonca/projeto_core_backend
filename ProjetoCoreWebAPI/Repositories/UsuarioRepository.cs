@@ -109,7 +109,11 @@ namespace ProjetoCoreWebAPI.Repositories
                 user.Email = usuarioDTO.Email;
                 user.UserName = usuarioDTO.UserName;
                 user.UpdatedAt = DateTime.Now;
-                user.Image = usuarioDTO.Image;
+
+                if (usuarioDTO.Image != null)
+                {
+                    user.Image = usuarioDTO.Image;
+                }
 
                 var alteraRoles = false;
                 if (usuarioDTO.Roles != null)

@@ -152,6 +152,7 @@ namespace ProjetoCoreWebAPI
             // Configura Interfaces / Repositories
             services.AddScoped<IAuth, AuthRepository>();
             services.AddScoped<IUsuario, UsuarioRepository>();
+            services.AddScoped<IRole, RoleRepository>();
 
             // Mapper para Models / DTOs
             services.AddAutoMapper(typeof(DTOMapperProfile));

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ProjetoCoreWebAPI.DTO;
 using ProjetoCoreWebAPI.Interfaces;
+using X.PagedList;
 
 namespace ProjetoCoreWebAPI.Controllers
 {
@@ -22,16 +23,16 @@ namespace ProjetoCoreWebAPI.Controllers
 
         // GET: api/<UsuarioController>
         [HttpGet]
-        public async Task<ActionResult> Get()
+        public async Task<ActionResult> Get(int? page)
         {
-            List<UsuarioDTO> usuariosDTO = await _usuarioRepository.GetAll();
+            PagedListDTO<UsuarioDTO> results = await _usuarioRepository.GetAll(page);
 
-            if(usuariosDTO == null)
+            if(results == null)
             {
                 return NotFound("Usuários não encontrados!");
             }
 
-            return Ok (usuariosDTO);
+            return Ok (results);
         }
 
         // GET api/<UsuarioController>/5

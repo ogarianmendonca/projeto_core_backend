@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace ProjetoCoreWebAPI.Repositories
 {
@@ -23,9 +24,12 @@ namespace ProjetoCoreWebAPI.Repositories
             _mapper = mapper;
         }
 
-        public async Task<List<UsuarioDTO>> GetAll()
+        public async Task<PagedListDTO<UsuarioDTO>> GetAll(int? page)
         {
-            var users = _userManager.Users.ToList();
+            var pageNumber = page ?? 1;
+
+            var users = _userManager.Users.ToList();           
+
             if (users == null)
             {
                 return null;
@@ -42,7 +46,15 @@ namespace ProjetoCoreWebAPI.Repositories
                 usuariosDTO.Add(usuarioDTO);
             }
 
-            return await Task.Run(() => usuariosDTO);
+            var usuariosDTOPaginado = usuariosDTO.ToPagedList(pageNumber, 5);
+
+            var listaUsuariosDTO = new PagedListDTO<UsuarioDTO>();
+            listaUsuariosDTO.TotalRegistros = usuariosDTOPaginado.TotalItemCount;
+            listaUsuariosDTO.TotalPaginas = usuariosDTOPaginado.PageCount;
+            listaUsuariosDTO.PaginaAtual = usuariosDTOPaginado.PageNumber;
+            listaUsuariosDTO.Results = (PagedList<UsuarioDTO>)usuariosDTOPaginado;
+
+            return await Task.Run(() => listaUsuariosDTO);
         }
 
         public async Task<UsuarioDTO> Get(int id)

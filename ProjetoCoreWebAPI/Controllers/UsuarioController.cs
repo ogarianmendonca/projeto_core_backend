@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjetoCoreWebAPI.DTO;
 using ProjetoCoreWebAPI.Interfaces;
-using X.PagedList;
 
 namespace ProjetoCoreWebAPI.Controllers
 {
@@ -23,9 +23,9 @@ namespace ProjetoCoreWebAPI.Controllers
 
         // GET: api/<UsuarioController>
         [HttpGet]
-        public async Task<ActionResult> Get(int? page)
+        public async Task<ActionResult> Get(int? page, int? totalPorPagina)
         {
-            PagedListDTO<UsuarioDTO> results = await _usuarioRepository.GetAll(page);
+            PagedListDTO<UsuarioDTO> results = await _usuarioRepository.GetAll(page, totalPorPagina);
 
             if(results == null)
             {
@@ -51,6 +51,7 @@ namespace ProjetoCoreWebAPI.Controllers
 
         // POST api/<UsuarioController>
         [HttpPost]
+        [Authorize(Roles = "ADMINISTRADOR")]
         public async Task<ActionResult> Post(UsuarioCreateDTO usuarioCreateDTO)
         {
             try
@@ -81,6 +82,7 @@ namespace ProjetoCoreWebAPI.Controllers
 
         // DELETE api/<UsuarioController>/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "ADMINISTRADOR")]
         public async Task<ActionResult> Delete(int id)
         {
             try

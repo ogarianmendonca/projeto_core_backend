@@ -9,7 +9,7 @@ namespace ProjetoCoreWebAPI.Interfaces
 {
     public interface IUsuario
     {
-        Task<PagedListDTO<UsuarioDTO>> GetAll(int? page);
+        Task<PagedListDTO<UsuarioDTO>> GetAll(int? page, int? totalPorPagina);
 
         Task<UsuarioDTO> Get(int id);
 

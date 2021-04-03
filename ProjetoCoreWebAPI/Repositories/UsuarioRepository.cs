@@ -24,11 +24,12 @@ namespace ProjetoCoreWebAPI.Repositories
             _mapper = mapper;
         }
 
-        public async Task<PagedListDTO<UsuarioDTO>> GetAll(int? page)
+        public async Task<PagedListDTO<UsuarioDTO>> GetAll(int? page, int? totalPorPagina)
         {
             var pageNumber = page ?? 1;
+            var pageSize = totalPorPagina ?? 5;
 
-            var users = _userManager.Users.ToList();           
+            var users = _userManager.Users.ToList().OrderBy(u  => u.Name);           
 
             if (users == null)
             {
@@ -46,7 +47,7 @@ namespace ProjetoCoreWebAPI.Repositories
                 usuariosDTO.Add(usuarioDTO);
             }
 
-            var usuariosDTOPaginado = usuariosDTO.ToPagedList(pageNumber, 5);
+            var usuariosDTOPaginado = usuariosDTO.ToPagedList(pageNumber, pageSize);
 
             var listaUsuariosDTO = new PagedListDTO<UsuarioDTO>();
             listaUsuariosDTO.TotalRegistros = usuariosDTOPaginado.TotalItemCount;

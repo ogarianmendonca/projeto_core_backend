@@ -115,6 +115,7 @@ namespace ProjetoCoreWebAPI.Controllers
             }
         }
 
+        // CONVERTE ARQUIVO DE IMAGEM PARA BASE64
         [HttpPost("convert-file")]
         public ActionResult ConvertToBase64()
         {
